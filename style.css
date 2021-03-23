@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+* { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+body { background: #BEC3C7; padding: 10px }
+.layer { width: auto; max-width: 640px; background: #ECF0F1; padding: 15px; margin: 15px auto; }
+.layer div { width: 45%; display: table-cell; vertical-align: middle; }
+h1 { text-transform: uppercase; text-align: center; line-height: 2; }
+h2 { text-transform: uppercase; text-align: center; line-height: 2; }
+p { text-align: center; }
+p span { padding: 5px; }
+
+@media (max-width: 640px) {
+  .layer div { width: 100%; display: block; text-align: center; }
+  .layer div table { margin: 0 auto; }
+}
+
+/* Календарь */
+.calendar { margin: 15px 0px 0px 0px; border-collapse: collapse; -ms-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; }
+.calendar td, .calendar th { padding: 10px; text-align: center; border: 1px solid #000; cursor: default; }
+.calendar tr td { color: #000; cursor: pointer; }
+.calendar tr td:hover { color: #32C46E; }
+.calendar tr .old-day { color: #ccc!important; cursor: default; }
+.calendar tr .old-day:hover, .booking:hover, .current:hover { color: #000; }
+.booking { color: #fff!important; background: #E84C3D; cursor: default; }
+.current { color: #fff!important; background: #32C46E; }
+
+/* Кнопка */
+button { display: none; margin: 0 auto; color: #fff; font-weight: bold; font-size: 14px; padding: 10px 20px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; 
+    background: #2eca6d; /* Old browsers */
+    background: -moz-linear-gradient(top,  #2eca6d 0%, #24b163 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #2eca6d 0%,#24b163 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #2eca6d 0%,#24b163 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2eca6d', endColorstr='#24b163',GradientType=0 ); /* IE6-9 */
+}
+button:hover { 
+    background: #24b163; /* Old browsers */
+    background: -moz-linear-gradient(top,  #24b163 0%, #2eca6d 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #24b163 0%,#2eca6d 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #24b163 0%,#2eca6d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#24b163', endColorstr='#2eca6d',GradientType=0 ); /* IE6-9 */
+}
+button:active { outline: none; }
+
+.booking-block-button { text-align: center; margin: 15px 0px 0px 0px; }
+.success { font-weight: bold; color: #32C46E; }

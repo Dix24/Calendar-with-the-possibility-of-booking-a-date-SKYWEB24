@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=640" />
+  
+  <title>Система бронирования</title>
+  <meta name="description" content="Система бронирования определенной даты" />
+  <meta name="keywords" content="забронировать дату" />
+  
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+        
+        /** Выбираем день */
+        var marker = 0; // Отслеживаем зажата клавиша мыши или нет
+        $('body').on('mousedown', '.calendar td', function(){ 
+            marker = 1; 
+            var $th = $(this), $bt = $('[name=button]');
+            ChoiceForBooking($th, $bt);
+        });
+        $('body').on('mouseup', '.calendar td', function(){ marker = 0; });
+        
+        // Отслеживаем движение мыши
+        $('body').on('mouseenter', '.calendar td', function(){ 
+            if(marker == 1){ 
+                var $th = $(this), $bt = $('[name=button]');
+                ChoiceForBooking($th, $bt);
+            }
+        });
+        
+        // Сброс маркера после события ухода курсора с календаря
+        $('body').on('mouseleave', '.calendar', function(){ marker = 0; });
+         
+        
+        /** Оформляем бронь */
+        $('body').on('click', '[name=button]', function(){ 
+            var $th = $(this), $day = new Object();
+            
+            // Собираем массив выбранных дней
+            $('.current').each(function(i){ if($(this).html().trim().length > 0){ $day[i] = $(this).html(); } });
+            
+            $.ajax({ 
+                type: "POST", url: "loading.php", dataType: "json", data: {'type':'save','day':$day}, 
+                success: function(data){ 
+                    if(data.error == '0'){
+                        // Уведомляем клиента о успешной брони
+                        $th.css({'display':'none'}).before('<p class="success">Бронирование успешно завершено.</p>');
+                        
+                        // Блокируем для выбора забронированные дни 
+                        $('.current').each(function(i){ 
+                            if($(this).html().trim().length > 0){
+                                $(this).addClass('booking'); $(this).attr('title', 'Занят'); $(this).removeClass('current'); 
+                            }
+                        });
+                    } 
+                }, error: function(){ }, complete: function(){ }
+            });
+        });
+        
+        /** Подгружаем забронированные дни из файла */
+        $.ajax({ 
+            type: "POST", url: "loading.php", dataType: "json", data: {'type':'loading'}, 
+            success: function(data){ 
+                if(data.return_day.length > 0){
+                    // Перебираем ячейки табличы в поисках забронированных дней
+                    $.each(data.return_day, function(index,value){
+                        var td = $('.calendar tbody td'); 
+                        td.each(function(i){ 
+                            // При нахождении дня - блокируем
+                            if($(this).html() == value){
+                                $(this).addClass('booking'); 
+                                $(this).attr('title', 'Занят'); 
+                                return false; }
+                        });
+                        
+                        console.log('Индекс: ' + index + '; Значение: ' + value);
+                    });
+                }
+            }, error: function(){ }, complete: function(){ }
+        });
+    });
+    
+    function ChoiceForBooking($th, $bt){
+        // Скрываем уведомление бронирования прошлого дня
+        if($('.success').length > 0){ $('.success').detach(); }
+        
+        // Проверяем доступен ли день для бронирования
+        if($th.attr('class') != 'old-day' && $th.attr('class')!= 'booking'){
+            // Отмена выбранного дня
+            if($th.attr('class') == 'current'){ 
+                $th.removeClass(); $th.attr('title', 'Свободен'); 
+                // Если выбранных дней нет - скрыть кнопку.
+                if($('.calendar td').hasClass('current') == false){ $bt.css({'display':'none'}); } 
+            } else { $th.addClass('current'); $th.attr('title', 'Выбран'); $bt.css({'display':'block'}); }
+        }
+    }
+  </script>
+</head>
+<body>
+    <div class="layer">
+    <h1>Система бронирования</h1>
+    
+    <p><span class="booking">&emsp;</span> - забронирован&emsp;<span class="current">&emsp;</span> - выбран</p>
+    <br />
+    <h2>Март 2021</h2>
+    
+    <!-- Просто верстаю календарь таблицей как на картинке -->
+    <div>
+        <table class="calendar">
+            <thead>
+                <tr>
+                    <th>Пн</th>
+                    <th>Вт</th>
+                    <th>Ср</th>
+                    <th>Чт</th>
+                    <th>Пт</th>
+                    <th>Сб</th>
+                    <th>Вс</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td title="Свободен">1</td>
+                    <td title="Свободен">2</td>
+                    <td title="Свободен">3</td>
+                    <td title="Свободен">4</td>
+                    <td title="Свободен">5</td>
+                    <td title="Свободен">6</td>
+                    <td title="Свободен">7</td>
+                </tr>
+                <tr>
+                    <td title="Свободен">8</td>
+                    <td title="Свободен">9</td>
+                    <td title="Свободен">10</td>
+                    <td title="Свободен">11</td>
+                    <td title="Свободен">12</td>
+                    <td title="Свободен">13</td>
+                    <td title="Свободен">14</td>
+                </tr>
+                <tr>
+                    <td title="Свободен">15</td>
+                    <td title="Свободен">16</td>
+                    <td title="Свободен">17</td>
+                    <td title="Свободен">18</td>
+                    <td title="Свободен">19</td>
+                    <td title="Свободен">20</td>
+                    <td title="Свободен">21</td>
+                </tr>
+                <tr>
+                    <td title="Свободен">22</td>
+                    <td title="Свободен">23</td>
+                    <td title="Свободен">24</td>
+                    <td title="Свободен">25</td>
+                    <td title="Свободен">26</td>
+                    <td title="Свободен">27</td>
+                    <td title="Свободен">28</td>
+                </tr>
+                <tr>
+                    <td title="Свободен">29</td>
+                    <td title="Свободен">30</td>
+                    <td title="Свободен">31</td>
+                    <td class="old-day">1</td>
+                    <td class="old-day">2</td>
+                    <td class="old-day">3</td>
+                    <td class="old-day">4</td>
+                </tr>
+                <tr>
+                    <td class="old-day">5</td>
+                    <td class="old-day">6</td>
+                    <td class="old-day">7</td>
+                    <td class="old-day">8</td>
+                    <td class="old-day">9</td>
+                    <td class="old-day">10</td>
+                    <td class="old-day">11</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="booking-block-button">
+        <button name="button" type="button">Забронировать</button>
+    </div>
+    
+    </div>
+</body>
+</html>
